@@ -1,0 +1,5 @@
+servicio:
+    - Crea agente Grafo
+    - Recibe peticiones del cliente
+    - Envía peticiones recibidas al agente grafo 
+    - Recibe de agente grafo la respuesta y la envia al cliente. 
