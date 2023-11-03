@@ -29,4 +29,17 @@ public class Utils {
         return agents;
     }
 
+    public static int comparaCadenas(String cadena, String array[])
+    {
+        int i = 0;
+        for ( i = 0; i < array.length; i++)
+        {
+            if(cadena.equalsIgnoreCase(array[i]))
+            {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
 }
