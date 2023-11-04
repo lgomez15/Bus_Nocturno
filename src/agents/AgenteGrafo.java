@@ -6,11 +6,10 @@ import behaviours.AgenteGrafoB;
 public class AgenteGrafo extends Agent{
 	
 	protected void setup() {
-        Object[] args = getArguments();
-
+        
         System.out.println("Hello im the" + getAID().getLocalName());
 
-        addBehaviour(new AgenteGrafoB(this, args[0].toString()));
+        addBehaviour(new AgenteGrafoB(this));
     }
 
     protected void takeDown() {
