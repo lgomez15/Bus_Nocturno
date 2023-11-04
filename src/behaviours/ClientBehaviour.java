@@ -35,7 +35,7 @@ public class ClientBehaviour extends CyclicBehaviour{
 
             case 1:
                 esperaMensaje(); // imprime el mensaje.
-                step = repetir(); // pide si se quiere realizar otra búsqueda. Devuevle 0 si se quiere repetir y 2 si no.
+                //step = repetir(); // pide si se quiere realizar otra búsqueda. Devuevle 0 si se quiere repetir y 2 si no.
             break;
             
             case 2:
@@ -77,6 +77,7 @@ public class ClientBehaviour extends CyclicBehaviour{
 
     public void comunicarConServicio(String content)
     {
+        System.out.println("Enviando peticion al servicio");
         AID[] agents = utils.Utils.searchAgents(myAgent, "Servicio"); // creamos un array de AID con los agentes que ofrecen el servicio.
         ACLMessage msg = new ACLMessage(ACLMessage.REQUEST); // creamos el mensaje.
         msg.setContent(content); // le añadimos el contenido.
@@ -102,6 +103,7 @@ public class ClientBehaviour extends CyclicBehaviour{
         }
         else
         {
+            System.out.println("Esperando respuesta del servicio");
             block();
         }
 
@@ -118,7 +120,7 @@ public class ClientBehaviour extends CyclicBehaviour{
         do{
             System.out.println("¿Quiere realizar otra búsqueda? (S/N)");
             respuesta  = System.console().readLine();
-        }while(utils.Utils.comparaCadenas(respuesta,respuestas) != 0);
+        }while(Utils.comparaCadenas(respuesta,respuestas) != 0);
 
         if(respuesta.equalsIgnoreCase("N"))
         {
