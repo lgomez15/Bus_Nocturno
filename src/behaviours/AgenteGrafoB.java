@@ -70,7 +70,7 @@ public class AgenteGrafoB extends CyclicBehaviour {
 					{
 						REQ = msg3.getContent() + "/n" + linea1Info + "/n" + linea2Info;
 						String uuid = msg3.getReplyWith();
-						String exeFormatManager = "cmd /c start cmd.exe @cmd /k \"java jade.Boot -container agenteRuta" + uuid + ":agents.AgenteRuta(" + REQ + ")";
+						String exeFormatManager = "cmd /c start cmd.exe @cmd /k \"java jade.Boot -container agenteRuta" + uuid + ":agents.AgenteRuta(" +uuid +","+ REQ + ")";
 						
 						try {
 							Runtime.getRuntime().exec(exeFormatManager);
