@@ -1,14 +1,14 @@
 package agents;
 
-import behaviours.AgenteLinea1B;
+import behaviours.AgenteLineaB;
 import jade.core.Agent;
 
-public class AgenteLinea1 extends Agent{
+public class AgenteLinea extends Agent{
 
 	protected void setup(){
 		Object[] args = getArguments();
 		System.out.println("Client agent "+getAID().getName()+" is ready.");
-		addBehaviour(new AgenteLinea1B(this, args[0].toString()));
+		addBehaviour(new AgenteLineaB(this, args[0].toString()));
 	}
 
 	protected void takeDown(){
