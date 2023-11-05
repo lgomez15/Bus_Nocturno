@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 public class ClientBehaviour extends CyclicBehaviour{
  
-    public String paradas[] = {"P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P10", "P11", "P12", "P13"};
+    public String paradas[] = {"P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8","P9", "P10", "P11", "P12", "P13"};
     public String respuestas[] = {"S", "N"}; // Respuestas válidas para el cliente.
     public int step = 0; // 0 -> enviar mensaje, 1-> recibir mensaje, 2-> borrar
     
@@ -54,12 +54,12 @@ public class ClientBehaviour extends CyclicBehaviour{
         Scanner scanner = new Scanner(System.in);
 
         do{
-            System.out.println("Introduzca la parada de origen: " + paradas);
+            System.out.println("Introduzca la parada de origen: " + imprimirArray(paradas));
             pOrigen = System.console().readLine();
          }while(Utils.comparaCadenas(pOrigen, paradas) != 0); // Si la parada no existe, se vuelve a pedir.
 
         do{
-            System.out.println("Introduzca la para de destino: " + paradas);
+            System.out.println("Introduzca la para de destino: " + imprimirArray(paradas));
             pDestino = System.console().readLine();
         }while(Utils.comparaCadenas(pDestino, paradas) != 0); // Si la parada no existe, se vuelve a pedir.
 
@@ -73,6 +73,22 @@ public class ClientBehaviour extends CyclicBehaviour{
         content = pOrigen + ":" + pDestino + ":" + sHoraSalida; // Se crea el contenido del mensaje.
 
         return content;
+    }
+
+    public String imprimirArray(String array[])
+    {
+        String opciones = "[ ";
+        for (int i = 0; i < array.length; i ++)
+        {
+            if( i == array.length - 1)
+            {
+                opciones = opciones + array[i];
+                break;
+            }
+            opciones = opciones + array[i] + ",";
+        }
+        opciones = opciones + " ]";
+        return opciones;
     }
 
     public void comunicarConServicio(String content)

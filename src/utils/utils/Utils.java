@@ -32,14 +32,16 @@ public class Utils {
     public static int comparaCadenas(String cadena, String array[])
     {
         int i = 0;
+        int iguales = 1;
         for ( i = 0; i < array.length; i++)
         {
             if(cadena.equalsIgnoreCase(array[i]))
             {
-                return 0;
+                iguales = 0;
+                break;
             }
         }
-        return 1;
+        return iguales;
     }
 
 
