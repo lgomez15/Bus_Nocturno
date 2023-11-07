@@ -66,6 +66,7 @@ public class AgenteGrafoB extends CyclicBehaviour {
 				if (msg3 != null) {
 					if (msg3.getPerformative() == ACLMessage.REQUEST) 
 					{
+						System.out.println("Recibido REQUEST de Servicio");
 						REQ = msg3.getContent() + "/n" + linea1Info + "/n" + linea2Info;
 						String uuid = msg3.getReplyWith();
 						String exeFormatRutaAgent = "cmd /c start cmd.exe @cmd /k \"java jade.Boot -container AgenteRuta" + agentesRuta + ":agents.AgenteRuta(" +uuid +","+ 1 + ")";
@@ -78,7 +79,7 @@ public class AgenteGrafoB extends CyclicBehaviour {
 					}
 					else 
 					{
-						//recieve RESPONSE from rutaAgents and INFORM to Service
+						System.out.println("Recibido INFORM de agenteRuta");
 						ACLMessage reply3 = new ACLMessage(ACLMessage.INFORM);
 						reply3.addReceiver(new AID("Servicio", AID.ISLOCALNAME));
 						reply3.setInReplyTo(msg3.getInReplyTo());
@@ -88,7 +89,6 @@ public class AgenteGrafoB extends CyclicBehaviour {
 					}
 				}
 				else {
-					System.out.println("waiting for request from service...");
 					block();
 				}
 

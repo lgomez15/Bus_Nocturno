@@ -41,7 +41,7 @@ public class ServiceBehaviour extends CyclicBehaviour{
             {
                 System.out.println("Peticion recibida del cliente: " + msg.getSender().toString());
                 UUID uid = UUID.randomUUID();
-                this.uidClientes.put(uid.toString(), msg.getSender().toString()); // registramos el uid del cliente y el uid random que le hemos asignado este ultimo será el que pasemos al agente grafo.
+                this.uidClientes.put(uid.toString(), msg.getSender().getLocalName()); // registramos el uid del cliente y el uid random que le hemos asignado este ultimo será el que pasemos al agente grafo.
                 ACLMessage msgReq = new ACLMessage(ACLMessage.REQUEST);
 
                 /*Le damos estructura al mensaje */
@@ -59,13 +59,15 @@ public class ServiceBehaviour extends CyclicBehaviour{
                 System.out.println("Respuesta recibida del agente grafo");
                 System.out.println("contenido: " + msg.getContent());
                 String contenido = msg.getContent(); // obtenemos el contenido del mensaje.
-                String uidCliente = msg.getInReplyTo(); // obtenemos el uid del cliente.
-
+                String uidCliente = (String) msg.getInReplyTo(); // obtenemos el uid del cliente.
+                System.out.println("uidCliente: " + uidCliente);
+                
                 ACLMessage msgClienteFinal = new ACLMessage(ACLMessage.INFORM);
                 msgClienteFinal.setContent(contenido);
-                msgClienteFinal.addReceiver(buscarAID(uidClientes.get(uidCliente))); // le pasamos el uid del cliente para que se lo envie a el.
+                msgClienteFinal.addReceiver(new AID(this.uidClientes.get(uidCliente), jade.core.AID.ISLOCALNAME)); // le pasamos el uid del cliente para que se lo envie a el.
                 myAgent.send(msgClienteFinal);
                 System.out.println("Respuesta enviada al cliente: " + uidClientes.get(uidCliente));
+                
             }
         }
         else
