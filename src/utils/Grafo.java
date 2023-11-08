@@ -1,32 +1,22 @@
 package utils;
-import java.util.ArrayList;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Grafo {
-    private int numNodos;
-    private List<List<Parada>> listaAdyacencia;
+		public Map<Integer, List<Nodo>> lineas;
 
-    public Grafo(int numNodos) {
-        this.numNodos = numNodos;
-        listaAdyacencia = new ArrayList<>(numNodos);
-
-        for (int i = 0; i < numNodos; i++) {
-            listaAdyacencia.add(new ArrayList<>());
+        public Grafo() {
+            lineas = new HashMap<>();
         }
-    }
 
-    public void agregarArista(Parada origen, Parada destino) {
-        listaAdyacencia.get(origen.getNumero()).add(destino);
-        listaAdyacencia.get(destino.getNumero()).add(origen);
-    }
-
-    public void imprimirGrafo() {
-        for (int i = 0; i < numNodos; i++) {
-            System.out.print("Parada " + i + " está conectada a: ");
-            for (Parada parada : listaAdyacencia.get(i)) {
-                System.out.print(parada.getNumero() + " (Peso: " + parada.getPeso() + ") ");
-            }
-            System.out.println();
+        public void agregarLinea(int numero, List<Nodo> nodos) {
+            lineas.put(numero, nodos);
         }
-    }
+
+        public List<Nodo> obtenerLinea(int numero) {
+            return lineas.get(numero);
+        }
+
 }
