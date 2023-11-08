@@ -11,7 +11,9 @@ public class AgenteGrafoB extends CyclicBehaviour {
 	private String linea1Info = null;
 	private String linea2Info = null;
 	private String REQ = null;
+	private int infoCompleta = 0;
 	private int step = 0;
+	private int agentesRuta = 0;
 
 
 	public AgenteGrafoB(Agent a) {
@@ -22,43 +24,39 @@ public class AgenteGrafoB extends CyclicBehaviour {
 
 		switch (step) {
 			case 0:
-				//send req msg to linea1 agent
 				ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
 				msg.setContent("L1");
-				msg.addReceiver(new AID("agenteLinea1", AID.ISLOCALNAME));  
+				msg.addReceiver(new AID("AgenteLinea1", AID.ISLOCALNAME));  
 				myAgent.send(msg);
 				
-				//wait for response
-				ACLMessage reply = myAgent.receive();
-				if (reply != null) {
-					if (reply.getPerformative() == ACLMessage.INFORM) {
-						linea1Info = reply.getContent();
-					}
-					step = 1;
-				}
-				else {
-					System.out.println("waiting for response from linea 1...");
-					block();
-				}
+				ACLMessage msg2 = new ACLMessage(ACLMessage.REQUEST);
+				msg2.setContent("L2");
+				msg2.addReceiver(new AID("AgenteLinea2", AID.ISLOCALNAME));
+				myAgent.send(msg2);
+				
+				step = 1;
+				
 			break;
 			case 1:
 
-				//send req msg to linea2 agent
-				ACLMessage msg2 = new ACLMessage(ACLMessage.REQUEST);
-				msg2.setContent("L2");
-				msg2.addReceiver(new AID("agenteLinea2", AID.ISLOCALNAME));
-				myAgent.send(msg2);
-
-				//wait for response
-				ACLMessage reply2 = myAgent.receive();
-				if (reply2 != null) {
-					if (reply2.getPerformative() == ACLMessage.INFORM) {
-						linea2Info = reply2.getContent();
+				ACLMessage reply = myAgent.receive();
+				if (reply != null) {
+					if (reply.getPerformative() == ACLMessage.INFORM && reply.getInReplyTo().toString().equals("L1")) {
+						linea1Info = reply.getContent();
+						infoCompleta++;
+						System.out.println("Info recibida de L1: " + linea1Info );
 					}
-					step = 2;
+					else if (reply.getPerformative() == ACLMessage.INFORM && reply.getInReplyTo().toString().equals("L2")) {
+						linea2Info = reply.getContent();
+						infoCompleta++;
+						System.out.println("Info recibida de L2: " + linea2Info);
+					}
+					if (infoCompleta == 2) {
+						step = 2;
+					}
 				}
-				else {
-					System.out.println("waiting for response from linea 2...");
+				else
+				{
 					block();
 				}
 			break;	
@@ -68,19 +66,20 @@ public class AgenteGrafoB extends CyclicBehaviour {
 				if (msg3 != null) {
 					if (msg3.getPerformative() == ACLMessage.REQUEST) 
 					{
+						System.out.println("Recibido REQUEST de Servicio");
 						REQ = msg3.getContent() + "/n" + linea1Info + "/n" + linea2Info;
 						String uuid = msg3.getReplyWith();
-						String exeFormatManager = "cmd /c start cmd.exe @cmd /k \"java jade.Boot -container agenteRuta" + uuid + ":agents.AgenteRuta(" + REQ + ")";
-						
+						String exeFormatRutaAgent = "cmd /c start cmd.exe @cmd /k \"java jade.Boot -container AgenteRuta" + agentesRuta + ":agents.AgenteRuta(" +uuid +","+ 1 + ")";
+						agentesRuta++;
 						try {
-							Runtime.getRuntime().exec(exeFormatManager);
+							Runtime.getRuntime().exec(exeFormatRutaAgent);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}					
 					}
 					else 
 					{
-						//recieve RESPONSE from rutaAgents and INFORM to Service
+						System.out.println("Recibido INFORM de agenteRuta");
 						ACLMessage reply3 = new ACLMessage(ACLMessage.INFORM);
 						reply3.addReceiver(new AID("Servicio", AID.ISLOCALNAME));
 						reply3.setInReplyTo(msg3.getInReplyTo());
@@ -90,7 +89,6 @@ public class AgenteGrafoB extends CyclicBehaviour {
 					}
 				}
 				else {
-					System.out.println("waiting for request from service...");
 					block();
 				}
 

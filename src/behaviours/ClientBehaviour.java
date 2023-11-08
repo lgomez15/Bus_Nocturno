@@ -54,12 +54,12 @@ public class ClientBehaviour extends CyclicBehaviour{
         Scanner scanner = new Scanner(System.in);
 
         do{
-            System.out.println("Introduzca la parada de origen: " + paradas);
+            System.out.println("Introduzca la parada de origen: " + imprimirArray(paradas));
             pOrigen = System.console().readLine();
          }while(Utils.comparaCadenas(pOrigen, paradas) != 0); // Si la parada no existe, se vuelve a pedir.
 
         do{
-            System.out.println("Introduzca la para de destino: " + paradas);
+            System.out.println("Introduzca la para de destino: " + imprimirArray(paradas));
             pDestino = System.console().readLine();
         }while(Utils.comparaCadenas(pDestino, paradas) != 0); // Si la parada no existe, se vuelve a pedir.
 
@@ -74,9 +74,25 @@ public class ClientBehaviour extends CyclicBehaviour{
 
         return content;
     }
+    public String imprimirArray(String array[])
+    {
+        String opciones = "[ ";
+        for (int i = 0; i < array.length; i ++)
+        {
+            if( i == array.length - 1)
+            {
+                opciones = opciones + array[i];
+                break;
+            }
+            opciones = opciones + array[i] + ",";
+        }
+        opciones = opciones + " ]";
+        return opciones;
+    }
 
     public void comunicarConServicio(String content)
     {
+        System.out.println("Enviando peticion al servicio");
         AID[] agents = utils.Utils.searchAgents(myAgent, "Servicio"); // creamos un array de AID con los agentes que ofrecen el servicio.
         ACLMessage msg = new ACLMessage(ACLMessage.REQUEST); // creamos el mensaje.
         msg.setContent(content); // le añadimos el contenido.
@@ -102,6 +118,7 @@ public class ClientBehaviour extends CyclicBehaviour{
         }
         else
         {
+            System.out.println("Esperando respuesta del servicio");
             block();
         }
 
@@ -115,10 +132,18 @@ public class ClientBehaviour extends CyclicBehaviour{
     public int repetir()
     {
         String respuesta;
+        Scanner scanner = new Scanner(System.in);
         do{
             System.out.println("¿Quiere realizar otra búsqueda? (S/N)");
-            respuesta  = System.console().readLine();
-        }while(utils.Utils.comparaCadenas(respuesta,respuestas) != 0);
+            if(scanner.hasNextLine())
+            {
+                respuesta  = scanner.nextLine();
+            }
+            else
+            {
+                respuesta = "N";
+            }
+        }while(Utils.comparaCadenas(respuesta,respuestas) != 0);
 
         if(respuesta.equalsIgnoreCase("N"))
         {
