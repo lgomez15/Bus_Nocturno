@@ -12,8 +12,8 @@ import java.io.IOException;
 public class AgenteLineaB extends CyclicBehaviour{
 	
 	private String filePath = "C:\\Users\\luisg\\Desktop\\";
-    String linea1Grafo = "1-2:2,2-3:2,3-4:2,4-5:7,5-6:1,6-7:4,7-8:3,8-9:2,9-10:1";
-    String linea2Grafo = "11-4:3,4-12:4,12-9:3,9-13:2";
+    String linea1Grafo = "1:0:2,2:2:3,3:3:4,4:2:5,5:7:6,6:1:7,7:4:8,8:3:9,9:2:10,10:1:0";
+    String linea2Grafo = "11:0:4,4:3:12,12:4:9,9:3:13,13:2:0";
     private int filePathNumber;	
     private String lineaInfo = null;
     private String autobusesInfo = null;

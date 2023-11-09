@@ -10,7 +10,7 @@ public class AgenteGrafoB extends CyclicBehaviour {
 
 	private String linea1Info = null;
 	private String linea2Info = null;
-	private String REQ = null;
+	private String request;
 	private int infoCompleta = 0;
 	private int step = 0;
 	private int agentesRuta = 0;
@@ -67,15 +67,32 @@ public class AgenteGrafoB extends CyclicBehaviour {
 					if (msg3.getPerformative() == ACLMessage.REQUEST) 
 					{
 						System.out.println("Recibido REQUEST de Servicio");
-						REQ = msg3.getContent() + "/n" + linea1Info + "/n" + linea2Info;
+						request = msg3.getContent() + "/n" + linea1Info + "/n" + linea2Info;
 						String uuid = msg3.getReplyWith();
+						String receiver = "AgenteRuta"+ agentesRuta;
 						String exeFormatRutaAgent = "cmd /c start cmd.exe @cmd /k \"java jade.Boot -container AgenteRuta" + agentesRuta + ":agents.AgenteRuta(" +uuid +","+ 1 + ")";
 						agentesRuta++;
 						try {
 							Runtime.getRuntime().exec(exeFormatRutaAgent);
 						} catch (Exception e) {
 							e.printStackTrace();
-						}					
+						}
+						
+						
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						//is copilot working? 
+						ACLMessage info = new ACLMessage(ACLMessage.INFORM);
+						info.addReceiver(new AID(receiver, AID.ISLOCALNAME));
+						info.setReplyWith(uuid);
+						info.setContent(request);
+						myAgent.send(info);
+						
 					}
 					else 
 					{
