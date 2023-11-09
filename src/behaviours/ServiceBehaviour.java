@@ -1,6 +1,7 @@
 package behaviours;
 
 import jade.core.AID;
+import jade.core.Agent;
 import jade.core.behaviours.*;
 import jade.lang.acl.ACLMessage;
 
@@ -15,58 +16,64 @@ public class ServiceBehaviour extends CyclicBehaviour{
     private String comandoGrafo = "cmd /c start cmd.exe @cmd /k \"java jade.Boot -container agenteGrafo:agents.AgenteGrafo";
     Map <String, String> uidClientes; // mapa para almaacenar los uids de los clientes y el uid random que les voy a asingar.
     
-    public ServiceBehaviour()
+    public ServiceBehaviour(Agent a)
     {
-        super();
+        super(a);
         this.uidClientes = new HashMap<String, String>();
+        try
+       {
+            Runtime.getRuntime().exec(comandoGrafo);
+       }catch(Exception e)
+       {
+            System.out.println(e);
+       }
     }
 
     public void action()
     {
 
-        /*CREAMOS EL AGENTE GRAFO */
-       try
-       {
-            Runtime.getRuntime().exec(comandoGrafo);
-       }catch(Exception e)
-       {
-        System.out.println("" + e);
-       }
-       /* RECIBBIMOS LOS MENSAJES EN LA COLA
-        * 1- Si es un inform es de un nodo inferior
-        * 2- Si es un request es de un nodo superior
-        */
-        
+
+
         ACLMessage msg = myAgent.receive(); 
-        // para encontrar el tipo de mensaje.
-       if(msg.getPerformative() == ACLMessage.REQUEST) // Si es un request, es de un nodo superior.
-       {
-        UUID uid = UUID.randomUUID();
-        this.uidClientes.put(uid.toString(), msg.getSender().toString()); // registramos el uid del cliente y el uid random que le hemos asignado este ultimo será el que pasemos al agente grafo.
-        ACLMessage msgReq = new ACLMessage(ACLMessage.REQUEST);
+        if(msg != null)
+        {
+            if(msg.getPerformative() == ACLMessage.REQUEST) // Si es un request, es de un nodo superior.
+            {
+                System.out.println("Peticion recibida del cliente: " + msg.getSender().toString());
+                UUID uid = UUID.randomUUID();
+                this.uidClientes.put(uid.toString(), msg.getSender().getLocalName()); // registramos el uid del cliente y el uid random que le hemos asignado este ultimo será el que pasemos al agente grafo.
+                ACLMessage msgReq = new ACLMessage(ACLMessage.REQUEST);
 
-        /*Le damos estructura al mensaje */
-        msgReq.setReplyWith(uid.toString()); // le pasamos el uid random que le hemos asignado al cliente.
-        String infoParaGrafo = msg.getContent();
-        msgReq.setContent(infoParaGrafo);
-        msgReq.addReceiver(buscarAID("agenteGrafo")); // se lo tenemos que enviar al agente grafo.
-        myAgent.send(msgReq);
-      
-    }
-       else if(msg.getPerformative() == ACLMessage.INFORM) // Si es un inform, es de un nodo inferior.
-       {
-        String contenido = msg.getContent(); // obtenemos el contenido del mensaje.
-        String uidCliente = msg.getInReplyTo(); // obtenemos el uid del cliente.
-
-        ACLMessage msgClienteFinal = new ACLMessage(ACLMessage.INFORM);
-        msgClienteFinal.setContent(contenido);
-        msgClienteFinal.addReceiver(buscarAID(uidClientes.get(uidCliente))); // le pasamos el uid del cliente para que se lo envie a el.
-        myAgent.send(msgClienteFinal);
-       }
-       else
-       {
+                /*Le damos estructura al mensaje */
+                msgReq.setReplyWith(uid.toString()); // le pasamos el uid random que le hemos asignado al cliente.
+                String infoParaGrafo = msg.getContent();
+                msgReq.setContent(infoParaGrafo);
+                System.out.println("Enviando peticion al agente grafo");
+                msgReq.addReceiver(buscarAID("agenteGrafo")); // se lo tenemos que enviar al agente grafo.
+                myAgent.send(msgReq);
+                System.out.println("Peticion enviada al agente grafo");
+        
+            }
+            else  // Si es un inform, es de un nodo inferior.
+            {
+                System.out.println("Respuesta recibida del agente grafo");
+                System.out.println("contenido: " + msg.getContent());
+                String contenido = msg.getContent(); // obtenemos el contenido del mensaje.
+                String uidCliente = (String) msg.getInReplyTo(); // obtenemos el uid del cliente.
+                System.out.println("uidCliente: " + uidCliente);
+                
+                ACLMessage msgClienteFinal = new ACLMessage(ACLMessage.INFORM);
+                msgClienteFinal.setContent(contenido);
+                msgClienteFinal.addReceiver(new AID(this.uidClientes.get(uidCliente), jade.core.AID.ISLOCALNAME)); // le pasamos el uid del cliente para que se lo envie a el.
+                myAgent.send(msgClienteFinal);
+                System.out.println("Respuesta enviada al cliente: " + uidClientes.get(uidCliente));
+                
+            }
+        }
+        else
+        {
            block();
-       }
+        }
 
 
     }

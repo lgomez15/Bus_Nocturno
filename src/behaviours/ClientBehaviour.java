@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 public class ClientBehaviour extends CyclicBehaviour{
  
-    public String paradas[] = {"P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8","P9", "P10", "P11", "P12", "P13"};
+    public String paradas[] = {"P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P10", "P11", "P12", "P13"};
     public String respuestas[] = {"S", "N"}; // Respuestas válidas para el cliente.
     public int step = 0; // 0 -> enviar mensaje, 1-> recibir mensaje, 2-> borrar
     
@@ -74,7 +74,6 @@ public class ClientBehaviour extends CyclicBehaviour{
 
         return content;
     }
-
     public String imprimirArray(String array[])
     {
         String opciones = "[ ";
@@ -93,6 +92,7 @@ public class ClientBehaviour extends CyclicBehaviour{
 
     public void comunicarConServicio(String content)
     {
+        System.out.println("Enviando peticion al servicio");
         AID[] agents = utils.Utils.searchAgents(myAgent, "Servicio"); // creamos un array de AID con los agentes que ofrecen el servicio.
         ACLMessage msg = new ACLMessage(ACLMessage.REQUEST); // creamos el mensaje.
         msg.setContent(content); // le añadimos el contenido.
@@ -118,6 +118,7 @@ public class ClientBehaviour extends CyclicBehaviour{
         }
         else
         {
+            System.out.println("Esperando respuesta del servicio");
             block();
         }
 
@@ -131,10 +132,18 @@ public class ClientBehaviour extends CyclicBehaviour{
     public int repetir()
     {
         String respuesta;
+        Scanner scanner = new Scanner(System.in);
         do{
             System.out.println("¿Quiere realizar otra búsqueda? (S/N)");
-            respuesta  = System.console().readLine();
-        }while(utils.Utils.comparaCadenas(respuesta,respuestas) != 0);
+            if(scanner.hasNextLine())
+            {
+                respuesta  = scanner.nextLine();
+            }
+            else
+            {
+                respuesta = "N";
+            }
+        }while(Utils.comparaCadenas(respuesta,respuestas) != 0);
 
         if(respuesta.equalsIgnoreCase("N"))
         {

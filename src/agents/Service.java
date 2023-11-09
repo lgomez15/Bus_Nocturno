@@ -28,7 +28,7 @@ public class Service extends Agent{
         }
 
 
-        this.addBehaviour(new ServiceBehaviour());
+        this.addBehaviour(new ServiceBehaviour(this));
     }
 
     protected void takeDown()
