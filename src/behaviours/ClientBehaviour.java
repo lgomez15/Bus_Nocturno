@@ -66,7 +66,8 @@ public class ClientBehaviour extends CyclicBehaviour{
             hSalida = scanner.nextDouble();
             scanner.close();
             sHoraSalida = Double.toString(hSalida); // Se convierte a String para poder enviarlo por ACLMessage.    
-
+        pOrigen = pOrigen.substring(1); // Se quita la P de la parada.
+        pDestino = pDestino.substring(1);
         content = pOrigen + ":" + pDestino + ":" + sHoraSalida; // Se crea el contenido del mensaje.
 
         return content;
