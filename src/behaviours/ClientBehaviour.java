@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 public class ClientBehaviour extends CyclicBehaviour{
  
-    public String paradas[] = {"P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8","P9", "P10", "P11", "P12", "P13"};
+    public String paradas[] = {"P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P10", "P11", "P12", "P13"};
     public String respuestas[] = {"S", "N"}; // Respuestas válidas para el cliente.
     public int step = 0; // 0 -> enviar mensaje, 1-> recibir mensaje, 2-> borrar
     
@@ -31,12 +31,15 @@ public class ClientBehaviour extends CyclicBehaviour{
                 content = pedirDatos(); // Pedimos los datos al usuario.        
                 comunicarConServicio(content); // busca el servicio y envia el mensje.
                 step = 1;
-                break;
+            break;
 
             case 1:
                 esperaMensaje(); // imprime el mensaje.
-                step = 0;
-                break;
+                step = repetir(); // pide si se quiere realizar otra búsqueda. Devuevle 0 si se quiere repetir y 2 si no.
+            break;
+            
+            case 2:
+                myAgent.doDelete(); // borra el agente.
             
         }
     }
@@ -66,8 +69,7 @@ public class ClientBehaviour extends CyclicBehaviour{
             hSalida = scanner.nextDouble();
             scanner.close();
             sHoraSalida = Double.toString(hSalida); // Se convierte a String para poder enviarlo por ACLMessage.    
-        pOrigen = pOrigen.substring(1); // Se quita la P de la parada.
-        pDestino = pDestino.substring(1);
+
         content = pOrigen + ":" + pDestino + ":" + sHoraSalida; // Se crea el contenido del mensaje.
 
         return content;
