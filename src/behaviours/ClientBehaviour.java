@@ -9,9 +9,11 @@ import java.util.Scanner;
 
 public class ClientBehaviour extends CyclicBehaviour{
  
-    public String paradas[] = {"P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8","P9", "P10", "P11", "P12", "P13"};
+    public String paradasO[] = {"P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8","P9","P11", "P12"};
+    public String paradasD[] = {"P2", "P3", "P4", "P5", "P6", "P7", "P8","P9", "P10", "P12", "P13"};
     public String respuestas[] = {"S", "N"}; // Respuestas válidas para el cliente.
     public int step = 0; // 0 -> enviar mensaje, 1-> recibir mensaje, 2-> borrar
+    public Scanner scanner = new Scanner(System.in);
     
     public ClientBehaviour(Agent a)
     {
@@ -35,13 +37,11 @@ public class ClientBehaviour extends CyclicBehaviour{
 
             case 1:
                 esperaMensaje(); // imprime el mensaje.
-                step = 0;
-                //step = repetir(); // pide si se quiere realizar otra búsqueda. Devuevle 0 si se quiere repetir y 2 si no.
             break;
             
             case 2:
-                myAgent.doDelete(); // borra el agente.
-            
+                myAgent.doDelete();
+                scanner.close();
         }
     }
 
@@ -52,23 +52,24 @@ public class ClientBehaviour extends CyclicBehaviour{
         String content;
         String pOrigen, pDestino, sHoraSalida;
         Double hSalida;
-        Scanner scanner = new Scanner(System.in);
+
+        int paradaOrigen, paradaDestino;
 
         do{
-            System.out.println("Introduzca la parada de origen: " + imprimirArray(paradas));
+            System.out.println("Introduzca la parada de origen: " + imprimirArray(paradasO));
             pOrigen = System.console().readLine();
-         }while(Utils.comparaCadenas(pOrigen, paradas) != 0); // Si la parada no existe, se vuelve a pedir.
-
+         }while(Utils.comparaCadenas(pOrigen, paradasO) != 0); // Si la parada no existe, se vuelve a pedir.
+         paradaOrigen = Integer.parseInt(pOrigen.substring(1));// Se quita la P del String.
         do{
-            System.out.println("Introduzca la para de destino: " + imprimirArray(paradas));
+            System.out.println("Introduzca la para de destino: " + imprimirArray(paradasD));
             pDestino = System.console().readLine();
-        }while(Utils.comparaCadenas(pDestino, paradas) != 0); // Si la parada no existe, se vuelve a pedir.
+            paradaDestino = Integer.parseInt(pDestino.substring(1));// Se quita la P del String.
+        }while(Utils.comparaCadenas(pDestino, paradasD) != 0 || paradaOrigen > paradaDestino ); // Si la parada no existe, se vuelve a pedir.
 
         do{
             System.out.println("Introuduce la hora a la que quieres salir ");
         }while (!scanner.hasNextDouble()); // Si la hora no es un double, se vuelve a pedir.
             hSalida = scanner.nextDouble();
-            scanner.close();
             sHoraSalida = Double.toString(hSalida); // Se convierte a String para poder enviarlo por ACLMessage.    
         
         pOrigen = pOrigen.substring(1);
@@ -95,7 +96,6 @@ public class ClientBehaviour extends CyclicBehaviour{
 
     public void comunicarConServicio(String content)
     {
-        System.out.println("Enviando peticion al servicio");
         AID[] agents = utils.Utils.searchAgents(myAgent, "Servicio"); // creamos un array de AID con los agentes que ofrecen el servicio.
         ACLMessage msg = new ACLMessage(ACLMessage.REQUEST); // creamos el mensaje.
         msg.setContent(content); // le añadimos el contenido.
@@ -112,16 +112,20 @@ public class ClientBehaviour extends CyclicBehaviour{
         {
             if(msg.getPerformative() == ACLMessage.INFORM) // Si es un inform, es de un nodo inferior.
             {
-               imprimeMensaje(msg.getContent()); // imprimimos el mensaje.
+                System.out.println("======================================");
+                System.out.println("RUTA CALCULADA");
+                System.out.println("======================================");
+                System.out.println(""+msg.getContent());
+                System.out.println("======================================");
             }
             else
             {
                 System.out.println("No se ha encontrado ninguna ruta");
             }
+            step = 2;
         }
         else
         {
-            System.out.println("Esperando respuesta del servicio");
             block();
         }
 
@@ -132,31 +136,6 @@ public class ClientBehaviour extends CyclicBehaviour{
         System.out.println(""+content);
     }
 
-    public int repetir()
-    {
-        String respuesta;
-        Scanner scanner = new Scanner(System.in);
-        do{
-            System.out.println("¿Quiere realizar otra búsqueda? (S/N)");
-            if(scanner.hasNextLine())
-            {
-                respuesta  = scanner.nextLine();
-            }
-            else
-            {
-                respuesta = "N";
-            }
-        }while(Utils.comparaCadenas(respuesta,respuestas) != 0);
-
-        if(respuesta.equalsIgnoreCase("N"))
-        {
-            return 2; // borra el agente
-        }
-        else
-        {
-           return 0;
-        }
-
-    }
+    
 
 }

@@ -38,7 +38,7 @@ public class AgenteGrafoB extends CyclicBehaviour {
 				
 			break;
 			case 1:
-
+			System.out.println("esperando infor de lineas, soy grafo");
 				ACLMessage reply = myAgent.receive();
 				if (reply != null) {
 					if (reply.getPerformative() == ACLMessage.INFORM && reply.getInReplyTo().toString().equals("L1")) {

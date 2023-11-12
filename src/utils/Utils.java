@@ -35,7 +35,7 @@ public class Utils {
         int iguales = 1;
         for ( i = 0; i < array.length; i++)
         {
-            if(cadena.equalsIgnoreCase(array[i]))
+            if(cadena.toUpperCase().equalsIgnoreCase(array[i]))
             {
                 iguales = 0;
                 break;

@@ -43,12 +43,12 @@ public class AgenteRutaB extends OneShotBehaviour {
 					}
 				break;
 				case 1:
-					System.out.println("Imprimiendo datos:");
 					String partes[] = request.split("/n");
 					String ruta[] = partes[0].split(":");
 					int o = Integer.parseInt(ruta[0]);
 					int d = Integer.parseInt(ruta[1]);
 					Double tiempo = Double.parseDouble(ruta[2]);
+					
 
 
 
@@ -79,12 +79,13 @@ public class AgenteRutaB extends OneShotBehaviour {
 							destino=n;
 					}
 
-					response = "Origen:" + origen.id + "\n";
-					response += "Destino:" + destino.id + "\n";;
+					response ="Origen:" + origen.id + "\n";
+					response +="Destino:" + destino.id + "\n";;
 
 					rutaOptima = rutaOptimRuta(grafo, origen, destino, tiempo);
 					response += "Ruta:" + "\n";
 					response += "Hora de salida:"+(tiempo+origen.tiempoDeEspera(tiempo))+ "\n";
+					
 					for(Nodo nodo : rutaOptima.nodos)
 					{
 						response += "Parada:"+nodo.id + "\n";
@@ -300,36 +301,4 @@ public class AgenteRutaB extends OneShotBehaviour {
         
     }
 
-
-						// System.out.println("||||||||||||||||||||||||||||||||");
-					// System.out.println("Linea 1");
-					// for(Nodo parada : grafo.lineas.get(1))
-					// {
-					// 	System.out.println("----------------------------");
-					// 	System.out.println("Parada:" + parada.id + "Peso:" + parada.tiempo);
-					// 	System.out.println("Vecino:" + parada.vecinos.get(0).id);
-
-					// 	for(Double b: parada.autobuses)
-					// 	{
-					// 		System.out.println(b);
-					// 	}
-
-					// 	System.out.println("----------------------------");
-					// }
-					// System.out.println("||||||||||||||||||||||||||||||||");
-					// System.out.println("Linea 2");
-					// for(Nodo parada : grafo.lineas.get(2))
-					// {
-					// 	System.out.println("----------------------------");
-					// 	System.out.println("Parada:" + parada.id + "Peso:" + parada.tiempo);
-					// 	System.out.println("Vecino:" + parada.vecinos.get(0).id);
-
-					// 	for(Double b: parada.autobuses)
-					// 	{
-					// 		System.out.println(b);
-					// 	}
-
-					// 	System.out.println("----------------------------");
-					// }
-					// System.out.println("||||||||||||||||||||||||||||||||");
 }
